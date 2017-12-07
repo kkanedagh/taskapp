@@ -136,7 +136,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         
         //サーチバーのキーワードをもとに検索
-        taskArray = realm.objects(Task.self).filter("category == %@", keyword).sorted(byKeyPath: "date", ascending: false)
+        taskArray = realm.objects(Task.self).filter("category == %@", keyword as Any).sorted(byKeyPath: "date", ascending: false)
 
         // テーブル再表示
         tableView.reloadData()
