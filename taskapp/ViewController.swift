@@ -9,9 +9,10 @@ import UIKit
 import RealmSwift
 import UserNotifications
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
 
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var searchBarField: UISearchBar!
     
     //Realmインスタンスを取得する
     let realm = try! Realm()
@@ -27,6 +28,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         tableView.delegate = self
         tableView.dataSource = self
+        
+        searchBarField.delegate = self
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -120,6 +124,36 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 }
             }
         }
+    }
+    
+    // サーチバーで検索ボタンが押された時の処理
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        // キーボードをしまう
+        searchBar.resignFirstResponder()
+        
+        //サーチバーのテキスト取得
+        let keyword = searchBar.text
+        
+        
+        //サーチバーのキーワードをもとに検索
+        taskArray = realm.objects(Task.self).filter("category == %@", keyword).sorted(byKeyPath: "date", ascending: false)
+
+        // テーブル再表示
+        tableView.reloadData()
+    }
+    
+    // サーチバーのキャンセルボタンが押された時の処理
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        // サーチバーの中身を空にする
+        searchBar.text = ""
+        // キーボードをしまう
+        searchBar.resignFirstResponder()
+        
+        //DB内全ての情報をセット
+        taskArray = realm.objects(Task.self).sorted(byKeyPath: "date", ascending: false)
+        
+        // テーブル再表示
+        tableView.reloadData()
     }
 
 }
